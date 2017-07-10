@@ -17,7 +17,7 @@ import com.dryork.util.MyBatisUtil;
 import com.dryork.util.RedisClient;
 import com.dryork.util.RedisKey;
 
-public class Admin {
+public class Admin { 
 	static YkDentistMapper ykDentistDao = null;
 	static YkChatMapper ykChatDao = null;
 	static YkPatientDentistMappingMapper ykPatientDentistMappingDao = null;
