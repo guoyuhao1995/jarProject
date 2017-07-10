@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration PUBLIC 
+	"-//mybatis.org//DTD Config 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<!-- <dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://localhost:3306/york_db" />
+				<property name="username" value="root" />
+				<property name="password" value="york168!" />
+			</dataSource> -->
+			<dataSource type="POOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://dryorkrds.mysql.rds.aliyuncs.com:3306/york_db" />
+				<property name="username" value="yorkdbuser" />
+				<property name="password" value="yorkdb-user" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="com/dryork/main/QsyyMapper.xml" />
+		<mapper resource="com/dryork/main/YkChatMapper.xml" />
+		<mapper resource="com/dryork/main/YkChatrecordMapper.xml" />
+		<mapper resource="com/dryork/main/YkDentistMapper.xml" />
+		<mapper resource="com/dryork/main/YkPatientDentistMappingMapper.xml" />
+		<mapper resource="com/dryork/main/YkUserextMapper.xml" />
+	</mappers>
+</configuration>

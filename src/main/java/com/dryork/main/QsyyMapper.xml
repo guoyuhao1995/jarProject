@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dryork.main.QsyyMapper">
+
+	<select id="conventionalTreatmentList" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT c.id, c.username, c.mobile, c.num1 'pat_count', d.num2 'appo_count', IF(e.cert_flag = 1, '是', '否') 'if_renzheng', f.his_name, (IF(g.numb > 0, '是', '否')) AS 'if_send'  FROM (
+		SELECT a.id, a.username, a.hosp_id, a.mobile, COUNT(b.id) num1
+		FROM yk_dentist a LEFT JOIN yk_patient_dentist_mapping b ON a.id = b.dentist_id
+		WHERE a.username in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+			#{item}
+		</foreach> 
+		GROUP BY a.id, a.username, a.hosp_id, a.mobile ) c JOIN
+		(
+		SELECT a.id, a.username, a.hosp_id, a.mobile, COUNT(b.id) num2
+		FROM yk_dentist a LEFT JOIN yk_appoint b ON a.id = b.dentist_id AND b.status != 0
+		WHERE a.username in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+			#{item}
+		</foreach> 
+		GROUP BY a.id, a.username, a.hosp_id, a.mobile ) d ON c.id = d.id
+		LEFT JOIN yk_dentist_morepoint e ON c.id = e.did
+		LEFT JOIN yk_hospital f ON c.hosp_id = f.id
+		LEFT JOIN (
+		SELECT a.id, a.username, COUNT(b.id) numb
+		FROM yk_dentist a LEFT JOIN yk_docadvice_patient b ON a.id = b.dentistid
+		WHERE a.username in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+			#{item}
+		</foreach> 
+		GROUP BY a.id, a.username
+		) g ON c.id = g.id
+	</select>
+	<select id="selectList" resultType="java.util.Map">
+		select s.name as 'username', y.id, y.his_name, y.mobile, y.pat_count, y.appo_count, y.if_renzheng, y.if_send, 
+		if(y.username is null, '否','是') as 'if_exist'  from statistics_doctor s 
+		left join(
+			SELECT c.id,  c.username, c.mobile, c.num1 'pat_count', d.num2 'appo_count', IF(e.cert_flag = 1, '是', '否') 'if_renzheng', f.his_name, (IF(g.numb > 0, '是', '否')) AS 'if_send'  FROM 
+			(
+				SELECT a.id,  a.username, a.hosp_id, a.mobile, COUNT(b.id) num1
+				FROM yk_dentist a LEFT JOIN yk_patient_dentist_mapping b ON a.id = b.dentist_id
+				GROUP BY  a.id, a.username, a.hosp_id, a.mobile 
+			) c JOIN
+			(
+				SELECT a.id, a.username, a.hosp_id, a.mobile, COUNT(b.id) num2
+				FROM yk_dentist a LEFT JOIN yk_appoint b ON a.id = b.dentist_id AND b.status != 0
+				GROUP BY  a.id, a.username, a.hosp_id, a.mobile 
+			) d ON c.id = d.id
+			LEFT JOIN yk_dentist_morepoint e ON c.id = e.did
+			LEFT JOIN yk_hospital f ON c.hosp_id = f.id
+			LEFT JOIN 
+			(
+				SELECT a.id, a.username, COUNT(b.id) numb
+				FROM yk_dentist a LEFT JOIN yk_docadvice_patient b ON a.id = b.dentistid
+				GROUP BY a.id, a.username
+			) g ON c.id = g.id
+		) y on s.name = y.username
+	</select>
+</mapper>
